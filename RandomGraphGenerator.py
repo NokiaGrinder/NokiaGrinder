@@ -34,7 +34,7 @@ for k in range(num): #the num variable determines how many lines (edges) are cre
 for k in range(num-1):
     if indexvector[k-1][0] == indexvector[k][0] and indexvector[k+1][0] == indexvector[k][0]:
         if indexvector[k-1][1] == indexvector[k][1] and indexvector[k+1][1] == indexvector[k][1]:
-            if indexvector [k-1][2] == indexvector[k][2] and indexvector[k+1][2] == indexvector[k][1]:
+            if indexvector [k-1][2] == indexvector[k][2] and indexvector[k+1][2] == indexvector[k][2]:
                 #This is all a comparison with each coordinate to see if the previous point and the next point uses the same vector, if so, then we add that to the remove array
                 #These points are considered "Redundency Points"
                 remove.append(k)
