@@ -2,7 +2,6 @@ import random as r
 import matplotlib.pyplot as plt
 import time
 from mpl_toolkits import mplot3d
-from collections import defaultdict
 
 num = int(input("Enter lines created: "))
 
