@@ -1,78 +1,64 @@
 import random as r
 import matplotlib.pyplot as plt
+from collections import defaultdict
 import time
 from mpl_toolkits import mplot3d
 
-num = int(input("Enter lines created: "))
+num = input("Enter lines created: ")
 
 proj = plt.axes(projection="3d")
 
-start_time = time.time()
-count = 0
-remove = []
-grandx = [0]
-grandy = [0]  
-grandz = [0]   
-indexvector = [[0, 0, 0]] 
+start_time = time.perf_counter()
 
-for k in range(num): #the num variable determines how many lines (edges) are created
+remove = []
+count = 0
+inc = 0
+
+grandx = defaultdict(int)
+grandx["0"] = 0 
+grandy = defaultdict(int)
+grandy["0"] = 0 
+grandz = defaultdict(int)
+grandz["0"] = 0 
+
+indexvector = defaultdict(list)
+indexvector["0"] = [0, 0, 0]
+
+for i in range(int(num)):
     ranx = r.randint(-1, 1)
     rany = r.randint(-1, 1)
     ranz = r.randint(-1, 1)
-    #Creates coordinates of x y z to be added onto the previous xyz coords
-    while ranx + grandx[k] == grandx[k] and rany + grandy[k] == grandy[k] and ranz + grandz[k] == grandz[k]:
+    while grandx[str(i)] + ranx == grandx[str(i)] and grandy[str(i)] + rany == grandy[str(i)] and grandz[str(i)] + ranz == grandz[str(i)]:
         ranx = r.randint(-1, 1)
         rany = r.randint(-1, 1)
         ranz = r.randint(-1, 1)
-    #Ensures that the new point does not have the same cords as the previous point
-    grandx.append(ranx + grandx[k])
-    grandy.append(rany + grandy[k])
-    grandz.append(ranz + grandy[k])
-    #These arrays are what is going to be plotted at the end
-    indexvector.append([ranx, rany, ranz])
-    #The vector created is stored as an array in indexvector
-for k in range(num-1):
-    if indexvector[k-1][0] == indexvector[k][0] and indexvector[k+1][0] == indexvector[k][0]:
-        if indexvector[k-1][1] == indexvector[k][1] and indexvector[k+1][1] == indexvector[k][1]:
-            if indexvector [k-1][2] == indexvector[k][2] and indexvector[k+1][2] == indexvector[k][2]:
+    grandx[str(i+1)] = grandx[str(i)] + ranx
+    grandy[str(i+1)] = grandy[str(i)] + rany
+    grandz[str(i+1)] = grandz[str(i)] + ranz
+    indexvector[str(i+1)] = [ranx, rany, ranz]
+    inc += 1
+    if inc == 3:
+        inc = 0
+        if indexvector[str(i-2)][0] == indexvector[str(i-1)][0] and indexvector[str(i-1)][0] == indexvector[str(i)][0]:
+            if indexvector[str(i-2)][1] == indexvector[str(i-1)][1] and indexvector[str(i-1)][1] == indexvector[str(i)][1]:
+                if indexvector[str(i-2)][2] == indexvector[str(i-1)][2] and indexvector[str(i-1)][2] == indexvector[str(i)][2]:
                 #This is all a comparison with each coordinate to see if the previous point and the next point uses the same vector, if so, then we add that to the remove array
                 #These points are considered "Redundency Points"
-                remove.append(k)
+                    del grandx[str(i-1)]
+                    del grandy[str(i-1)]
+                    del grandz[str(i-1)]
+                    count += 1
 
-for l in remove:
-    del grandx[l]
-    del grandy[l]
-    del grandz[l]
-    for i in range(len(remove)):
-        remove[i] -= 1
-        #because remove is storing the index of the redundency point, we need to decrement that index after deleting one of the points
-        #This is so that the index of the redundency point takes in account the smaller array
+print(count)
 
-#removes all the redundency points in the grand arrays 
-a = [grandx[0], grandx[num-len(remove)]]
-b = [grandy[0], grandy[num-len(remove)]]
-c = [grandz[0], grandz[num-len(remove)]]
+x = list(grandx.values())
+y = list(grandy.values())
+z = list(grandz.values())
 
-
-proj.plot(a, b, c)
-proj.plot(grandx, grandy, grandz)
-#plots lmao
-
-print(len(remove)-1)
-#Counts how many redundency points have been removed
-print("~0.156%. of points removed")
-#This is the program's average percentage of redundency points removed
-#NOT FULLY ACCURATE
-print("max")
-print(max(grandx))
-print(max(grandy))
-print(max(grandz))
-print("min")
-print(min(grandx))
-print(min(grandy))
-print(min(grandz))
-
-end_time = time.time()
+end_time = time.perf_counter()
 elapsed_time = end_time - start_time
-print(f"Code execution time: {elapsed_time:.4f} seconds") #Time to be executed can be shown
+print(f"Elapsed time: {elapsed_time:.4f} seconds")
+
+plt.plot(x, y, z)
+
 plt.show()
